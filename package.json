@@ -1,0 +1,17 @@
+{
+    "name" : "chainsaw",
+    "version" : "0.0.1",
+    "description" : "Build chainable fluent interfaces the easy way",
+    "modules" : {
+        "index" : "./index.js",
+    },
+    "repository" : {
+        "type" : "git",
+        "url" : "http://github.com/substack/node-chainsaw.git"
+    },
+    "dependencies" : {
+        "traverse" : ">=0.2.3"
+    },
+    "license" : "MIT/X11",
+    "engine" : ["node >=0.2.0"]
+}
