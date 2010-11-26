@@ -2,10 +2,8 @@ var Hash = require('traverse/hash');
 var EventEmitter = require('events').EventEmitter;
 
 module.exports = function Chainsaw (init, builder) {
-    var chain = {};
-    
     var saw = new EventEmitter;
-    saw.actions = [];
+    var actions = saw.actions = [];
     
     saw.next = function (vars) {
         var action = actions.shift();
@@ -14,20 +12,24 @@ module.exports = function Chainsaw (init, builder) {
         else saw.emit('end');
     };
     
-    var chain = saw.chain = Hash.map(handlers, function (name, h) {
-        return function () {
-            saw.actions.push({
+    var chain = saw.chain = {};
+    var handlers = saw.handlers = {};
+    builder.call(handlers, chain, saw);
+    
+    Hash(handlers).forEach(function (h, name) {
+        chain[name] = function () {
+            actions.push({
                 name : name,
                 args : [].slice.call(arguments),
             });
+            return chain;
         };
     });
-    
-    var handlers = saw.handlers = {};
-    builder.call(handlers, chain, saw);
     
     process.nextTick(function () {
         saw.emit('begin');
         saw.next(init);
     });
+    
+    return chain;
 };
