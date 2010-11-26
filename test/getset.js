@@ -5,16 +5,18 @@ exports.getset = function (assert) {
         assert.fail('builder never fired');
     }, 50);
     
-    var ch = Chainsaw(0, function (chain, saw) {
+    var ch = Chainsaw(function (chain, saw) {
         clearInterval(to);
+        var num = 0;
         
-        this.get = function (n, cb) {
-            cb(n);
-            saw.next(n);
+        this.get = function (cb) {
+            cb(num);
+            saw.next();
         };
         
-        this.set = function (n, m) {
-            saw.next(m);
+        this.set = function (n) {
+            num = n;
+            saw.next();
         };
         
         var ti = setTimeout(function () {
