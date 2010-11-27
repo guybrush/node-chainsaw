@@ -184,3 +184,75 @@ exports.down = function (assert) {
         })
     ;
 };
+
+exports.trap = function (assert) {
+    var error = null;
+    var ch = Chainsaw(function (saw) {
+        var pars = 0;
+        var stack = [];
+        var i = 0;
+        
+        this.par = function (cb) {
+            pars ++;
+            var j = i ++;
+            cb.call(function () {
+                pars --;
+                stack[j] = [].slice.call(arguments);
+                saw.down('result');
+            });
+            saw.next();
+        };
+        
+        this.join = function (cb) {
+            saw.trap('result', function () {
+                if (pars == 0) {
+                    cb.apply(this, stack);
+                }
+            });
+        };
+        
+        this.raise = function (err) {
+            error = err;
+            saw.down('catch');
+        };
+        
+        this.do = function (cb) {
+            cb.call(this);
+        };
+        
+        this.catch = function (cb) {
+            if (error) {
+                saw.nest(cb, error);
+                error = null;
+            }
+            else saw.next();
+        };
+    });
+    
+    var to = setTimeout(function () {
+        assert.fail(".do() after .join() didn't fire");
+    }, 50);
+    var tj = setTimeout(function () {
+        assert.fail('.join() never fired');
+    }, 50);
+    
+    var joined = false;
+    ch
+        .par(function () {
+            setTimeout(this.bind(null, 2), 50);
+        })
+        .par(function () {
+            setTimeout(this.bind(null, 1), 25);
+        })
+        .join(function (x, y) {
+            assert.equal(x, 1);
+            assert.equal(y, 2);
+            cleartimeout(tj);
+            joined = true;
+        })
+        .do(function () {
+            clearTimeout(to);
+            assert.ok(joined);
+        })
+    ;
+};

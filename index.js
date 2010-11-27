@@ -65,12 +65,12 @@ Chainsaw.saw = function (builder, handlers) {
     };
     
     saw.trap = function (name, cb) {
-        var ps = (Array.isArray(name) ? name : [name]).join('/');
+        var ps = Array.isArray(name) ? name : [name];
         saw.actions.push({
             path : ps,
-            step : raw.step,
+            step : saw.step,
             cb : cb,
-            trap : false,
+            trap : true,
         });
     };
     
@@ -87,7 +87,7 @@ Chainsaw.saw = function (builder, handlers) {
         var act = saw.actions[0];
         if (act && act.trap) {
             // It's a trap.
-            saw.actions.shift();
+            saw.step ++;
             act.cb();
         }
         else saw.next();
