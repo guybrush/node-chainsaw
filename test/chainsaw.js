@@ -207,6 +207,7 @@ exports.trap = function (assert) {
             saw.trap('result', function () {
                 if (pars == 0) {
                     cb.apply(this, stack);
+                    saw.next();
                 }
             });
         };
@@ -231,23 +232,23 @@ exports.trap = function (assert) {
     
     var to = setTimeout(function () {
         assert.fail(".do() after .join() didn't fire");
-    }, 50);
+    }, 100);
     var tj = setTimeout(function () {
         assert.fail('.join() never fired');
-    }, 50);
+    }, 100);
     
     var joined = false;
     ch
         .par(function () {
-            setTimeout(this.bind(null, 2), 50);
+            setTimeout(this.bind(null, 1), 50);
         })
         .par(function () {
-            setTimeout(this.bind(null, 1), 25);
+            setTimeout(this.bind(null, 2), 25);
         })
         .join(function (x, y) {
-            assert.equal(x, 1);
-            assert.equal(y, 2);
-            cleartimeout(tj);
+            assert.equal(x[0], 1);
+            assert.equal(y[0], 2);
+            clearTimeout(tj);
             joined = true;
         })
         .do(function () {

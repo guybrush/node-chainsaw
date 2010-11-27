@@ -84,10 +84,10 @@ Chainsaw.saw = function (builder, handlers) {
         if (i >= 0) saw.step += i;
         else saw.step = saw.actions.length;
         
-        var act = saw.actions[0];
+        var act = saw.actions[saw.step - 1];
         if (act && act.trap) {
-            // It's a trap.
-            saw.step ++;
+            // It's a trap!
+            saw.step = act.step;
             act.cb();
         }
         else saw.next();
