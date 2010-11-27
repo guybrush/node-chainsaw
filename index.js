@@ -4,7 +4,8 @@ var EventEmitter = require('events').EventEmitter;
 module.exports = Chainsaw;
 function Chainsaw (builder) {
     var saw = Chainsaw.saw(builder, {});
-    builder.call(saw.handlers, saw);
+    var r = builder.call(saw.handlers, saw);
+    if (r !== undefined) saw.handlers = r;
     return saw.chain();
 };
 
@@ -45,11 +46,11 @@ Chainsaw.saw = function (builder, handlers) {
     saw.nest = function (cb) {
         var s = Chainsaw.saw(builder, {});
         s.on('end', saw.next);
-        builder.call(s.handlers, s);
-        var ch = s.chain();
+        var r = builder.call(s.handlers, s);
+        if (r !== undefined) saw.handlers = r;
         
         var args = [].slice.call(arguments, 1);
-        cb.apply(ch, args);
+        cb.apply(s.chain(), args);
     };
     
     return saw;
