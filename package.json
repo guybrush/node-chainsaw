@@ -1,7 +1,7 @@
 {
     "name" : "chainsaw",
     "version" : "0.0.1",
-    "description" : "Build chainable fluent interfaces the easy way",
+    "description" : "Build chainable fluent interfaces the easy way... with a freakin' chainsaw!",
     "modules" : {
         "index" : "./index.js",
     },
