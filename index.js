@@ -11,13 +11,13 @@ function Chainsaw (builder) {
 
 Chainsaw.saw = function (builder, handlers) {
     var saw = new EventEmitter;
-    var actions = saw.actions = [];
     saw.handlers = handlers;
+    saw.actions = [];
     
     saw.chain = function () {
-        var ch = Hash.map(handlers, function (h, name) {
+        var ch = Hash.map(saw.handlers, function (h, name) {
             return function () {
-                actions.push({
+                saw.actions.push({
                     name : name,
                     args : [].slice.call(arguments),
                 });
@@ -34,12 +34,12 @@ Chainsaw.saw = function (builder, handlers) {
     };
     
     saw.next = function () {
-        var action = actions.shift();
+        var action = saw.actions.shift();
         if (!action) {
             saw.emit('end');
         }
         else {
-            handlers[action.name].apply(handlers, action.args);
+            saw.handlers[action.name].apply(saw.handlers, action.args);
         }
     };
     
@@ -47,7 +47,7 @@ Chainsaw.saw = function (builder, handlers) {
         var s = Chainsaw.saw(builder, {});
         s.on('end', saw.next);
         var r = builder.call(s.handlers, s);
-        if (r !== undefined) saw.handlers = r;
+        if (r !== undefined) s.handlers = r;
         
         var args = [].slice.call(arguments, 1);
         cb.apply(s.chain(), args);

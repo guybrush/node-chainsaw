@@ -90,3 +90,29 @@ exports.nest = function (assert) {
         })
     ;
 };
+
+exports.builder = function (assert) {
+    var cx = Chainsaw(function (saw) {
+        this.x = function () {};
+    });
+    assert.ok(cx.x);
+    
+    var cy = Chainsaw(function (saw) {
+        return { y : function () {} };
+    });
+    assert.ok(cy.y);
+    
+    var cz = Chainsaw(function (saw) {
+        return { z : function (cb) { saw.nest(cb) } };
+    });
+    assert.ok(cz.z);
+    
+    var to = setTimeout(function () {
+        assert.fail('nested z didn\'t run');
+    }, 50);
+    
+    cz.z(function () {
+        clearTimeout(to);
+        assert.ok(this.z);
+    });
+};
