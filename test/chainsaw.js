@@ -116,3 +116,38 @@ exports.builder = function (assert) {
         assert.ok(this.z);
     });
 };
+
+this.attr = function (assert) {
+    var xy = [];
+    var ch = Chainsaw(function (saw) {
+        this.h = {
+            x : function () { 
+                xy.push('x');
+                saw.next();
+            },
+            y : function () {
+                xy.push('y');
+                saw.next();
+            }
+        };
+    });
+    assert.ok(ch.h);
+    assert.ok(ch.h.x);
+    assert.ok(ch.h.y);
+    
+    ch.h.x().h.y();
+    assert.eql(xy, ['x','y']);
+};
+
+/*
+exports.trickle = function (assert) {
+    var ch = Chainsaw(function (saw) {
+        this.emit = {
+            up : function () {
+            },
+            down : function () {
+            },
+        };
+    });
+};
+*/
