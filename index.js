@@ -5,12 +5,6 @@ module.exports = Chainsaw;
 function Chainsaw (builder) {
     var saw = Chainsaw.saw({});
     builder.call(saw.handlers, saw);
-    
-    process.nextTick(function () {
-        saw.emit('begin');
-        saw.next();
-    });
-    
     return saw.chain();
 };
 
@@ -29,6 +23,12 @@ Chainsaw.saw = function (handlers) {
                 return ch;
             };
         });
+        
+        process.nextTick(function () {
+            saw.emit('begin');
+            saw.next();
+        });
+        
         return ch;
     };
     

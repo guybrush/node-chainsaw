@@ -81,7 +81,7 @@ exports.nest = function (assert) {
             ;
         })
         .do(function (vars) {
-            vs.y = 'y';
+            vars.y = 'y';
             order.push(4);
         })
         .finally(function (vars) {
