@@ -60,7 +60,7 @@ exports.nest = function (assert) {
     
     var order = [];
     var to = setTimeout(function () {
-        assert.fail('didn\'t get to the end');
+        assert.fail("Didn't get to the end");
     }, 50);
     
     ch
@@ -108,7 +108,7 @@ exports.builder = function (assert) {
     assert.ok(cz.z);
     
     var to = setTimeout(function () {
-        assert.fail('nested z didn\'t run');
+        assert.fail("Nested z didn't run");
     }, 50);
     
     cz.z(function () {
@@ -119,7 +119,7 @@ exports.builder = function (assert) {
 
 this.attr = function (assert) {
     var to = setTimeout(function () {
-        assert.fail('attr chain didn\'t finish');
+        assert.fail("attr chain didn't finish");
     }, 50);
     
     var xy = [];
@@ -144,15 +144,42 @@ this.attr = function (assert) {
     ch.h.x().h.y();
 };
 
-/*
-exports.trickle = function (assert) {
+exports.down = function (assert) {
+    var error = null;
     var ch = Chainsaw(function (saw) {
-        this.emit = {
-            up : function () {
-            },
-            down : function () {
-            },
+        this.raise = function (err) {
+            error = err;
+            saw.down('catch');
+        };
+        
+        this.do = function (cb) {
+            saw.nest(cb);
+        };
+        
+        this.catch = function (cb) {
+            if (error) {
+                saw.nest(cb, error);
+                error = null;
+            }
+            else saw.next();
         };
     });
+    
+    var to = setTimeout(function () {
+        assert.fail(".do() after .catch() didn't fire");
+    }, 50);
+    
+    ch
+        .do(function () {
+            this.raise('pow');
+        })
+        .do(function () {
+            assert.fail("raise didn't skip over this do block");
+        })
+        .catch(function (err) {
+            assert.equal(err, 'pow');
+        })
+        .do(function () {
+            clearTimeout(to);
+        })
 };
-*/

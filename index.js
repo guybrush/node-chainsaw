@@ -13,6 +13,7 @@ Chainsaw.saw = function (builder, handlers) {
     var saw = new EventEmitter;
     saw.handlers = handlers;
     saw.actions = [];
+    saw.step = 0;
     
     saw.chain = function () {
         var ch = Traverse(saw.handlers).map(function (node) {
@@ -40,11 +41,13 @@ Chainsaw.saw = function (builder, handlers) {
     };
     
     saw.next = function () {
+        saw.step ++;
         var action = saw.actions.shift();
+        
         if (!action) {
             saw.emit('end');
         }
-        else {
+        else if (!action.trap) {
             var node = saw.handlers;
             action.path.forEach(function (key) { node = node[key] });
             node.apply(saw.handlers, action.args);
@@ -59,6 +62,36 @@ Chainsaw.saw = function (builder, handlers) {
         
         var args = [].slice.call(arguments, 1);
         cb.apply(s.chain(), args);
+    };
+    
+    saw.trap = function (name, cb) {
+        var ps = (Array.isArray(name) ? name : [name]).join('/');
+        saw.actions.push({
+            path : ps,
+            step : raw.step,
+            cb : cb,
+            trap : false,
+        });
+    };
+    
+    saw.down = function (name) {
+        var ps = (Array.isArray(name) ? name : [name]).join('/');
+        var i = saw.actions.map(function (x) {
+            if (x.trap && x.step <= saw.step) return false;
+            return x.path.join('/') == ps;
+        }).indexOf(true);
+        
+        if (i >= 0) saw.actions.splice(0, i);
+        else saw.actions = [];
+        
+        saw.step += i + 1;
+        var act = saw.actions[0];
+        if (act && act.trap) {
+            // It's a trap.
+            saw.actions.shift();
+            act.cb();
+        }
+        else saw.next();
     };
     
     return saw;
