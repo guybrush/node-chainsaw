@@ -46,7 +46,6 @@ Chainsaw.saw = function (builder, handlers) {
         }
         else {
             var node = saw.handlers;
-            console.dir(action);
             action.path.forEach(function (key) { node = node[key] });
             node.apply(saw.handlers, action.args);
         }

@@ -117,8 +117,11 @@ exports.builder = function (assert) {
     });
 };
 
-/*
 this.attr = function (assert) {
+    var to = setTimeout(function () {
+        assert.fail('attr chain didn\'t finish');
+    }, 50);
+    
     var xy = [];
     var ch = Chainsaw(function (saw) {
         this.h = {
@@ -129,6 +132,8 @@ this.attr = function (assert) {
             y : function () {
                 xy.push('y');
                 saw.next();
+                assert.eql(xy, ['x','y']);
+                clearTimeout(to);
             }
         };
     });
@@ -137,7 +142,6 @@ this.attr = function (assert) {
     assert.ok(ch.h.y);
     
     ch.h.x().h.y();
-    assert.eql(xy, ['x','y']);
 };
 
 /*
