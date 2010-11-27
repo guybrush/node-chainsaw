@@ -47,3 +47,47 @@ exports.getset = function (assert) {
         })
     ;
 };
+
+exports.nest = function (assert) {
+    var ch = Chainsaw(function (saw) {
+        var vars = {};
+        
+        this.do = function (cb) {
+            saw.nest(cb, vars);
+        };
+        
+        this.finally = function (cb) {
+            saw.on('end', cb.bind({}, vars));
+        };
+    });
+    
+    var order = [];
+    var to = setTimeout(function () {
+        assert.fail('didn\'t get to the end');
+    }, 50);
+    ch
+        .do(function (vars) {
+            vars.x = 'y';
+            
+            this
+                .do(function (vs) {
+                    order.push(2);
+                    vs.x = 'x';
+                })
+                .do(function (vs) {
+                    order.push(3);
+                    vs.z = 'z';
+                })
+            ;
+        })
+        .do(function (vars) {
+            vs.y = 'y';
+            order.push(4);
+        })
+        .finally(function (vars) {
+            assert.eql(order, [1,2,3,4]);
+            assert.eql(vars, { x : 'x', y : 'y', z : 'z' });
+            clearTimeout(to);
+        })
+    ;
+};

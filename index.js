@@ -42,5 +42,14 @@ Chainsaw.saw = function (handlers) {
         }
     };
     
+    saw.nest = function (cb) {
+        var s = Chainsaw.saw(handlers);
+        var ch = saw.chain();
+        
+        var args = [].slice.call(arguments, 1);
+        cb.apply(ch, args);
+        s.on('end', saw.next);
+    };
+    
     return saw;
 }; 
