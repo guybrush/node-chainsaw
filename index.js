@@ -80,7 +80,6 @@ Chainsaw.saw = function (builder, handlers) {
             if (x.trap && x.step <= saw.step) return false;
             return x.path.join('/') == ps;
         }).indexOf(true);
-        console.dir({ name : name, i : i, actions : saw.actions });
         
         if (i >= 0) saw.step += i;
         else saw.step = saw.actions.length;

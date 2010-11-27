@@ -153,7 +153,7 @@ exports.down = function (assert) {
         };
         
         this.do = function (cb) {
-            saw.nest(cb);
+            cb.call(this);
         };
         
         this.catch = function (cb) {
