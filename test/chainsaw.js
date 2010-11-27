@@ -117,6 +117,7 @@ exports.builder = function (assert) {
     });
 };
 
+/*
 this.attr = function (assert) {
     var xy = [];
     var ch = Chainsaw(function (saw) {
