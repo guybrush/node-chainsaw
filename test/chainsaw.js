@@ -49,25 +49,24 @@ exports.getset = function (assert) {
 };
 
 exports.nest = function (assert) {
-    var ch = Chainsaw(function (saw) {
+    var ch = (function () {
         var vars = {};
-        
-        this.do = function (cb) {
-            saw.nest(cb, vars);
-        };
-        
-        this.finally = function (cb) {
-            saw.on('end', cb.bind({}, vars));
-        };
-    });
+        return Chainsaw(function (saw) {
+            this.do = function (cb) {
+                saw.nest(cb, vars);
+            };
+        });
+    })();
     
     var order = [];
     var to = setTimeout(function () {
         assert.fail('didn\'t get to the end');
     }, 50);
+    
     ch
         .do(function (vars) {
             vars.x = 'y';
+            order.push(1);
             
             this
                 .do(function (vs) {
@@ -84,7 +83,7 @@ exports.nest = function (assert) {
             vars.y = 'y';
             order.push(4);
         })
-        .finally(function (vars) {
+        .do(function (vars) {
             assert.eql(order, [1,2,3,4]);
             assert.eql(vars, { x : 'x', y : 'y', z : 'z' });
             clearTimeout(to);
