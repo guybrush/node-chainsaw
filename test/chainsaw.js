@@ -182,4 +182,5 @@ exports.down = function (assert) {
         .do(function () {
             clearTimeout(to);
         })
+    ;
 };
