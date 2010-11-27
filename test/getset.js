@@ -5,7 +5,7 @@ exports.getset = function (assert) {
         assert.fail('builder never fired');
     }, 50);
     
-    var ch = Chainsaw(function (chain, saw) {
+    var ch = Chainsaw(function (saw) {
         clearInterval(to);
         var num = 0;
         

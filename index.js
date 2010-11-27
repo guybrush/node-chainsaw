@@ -1,35 +1,46 @@
 var Hash = require('traverse/hash');
 var EventEmitter = require('events').EventEmitter;
 
-module.exports = function Chainsaw (builder) {
-    var saw = new EventEmitter;
-    var actions = saw.actions = [];
-    
-    saw.next = function () {
-        var action = actions.shift();
-        if (action) handlers[action.name]
-            .apply(handlers, action.args);
-        else saw.emit('end');
-    };
-    
-    var chain = saw.chain = {};
-    var handlers = saw.handlers = {};
-    builder.call(handlers, chain, saw);
-    
-    Hash(handlers).forEach(function (h, name) {
-        chain[name] = function () {
-            actions.push({
-                name : name,
-                args : [].slice.call(arguments),
-            });
-            return chain;
-        };
-    });
+module.exports = Chainsaw;
+function Chainsaw (builder) {
+    var saw = Chainsaw.saw({});
+    builder.call(saw.handlers, saw);
     
     process.nextTick(function () {
         saw.emit('begin');
         saw.next();
     });
     
-    return chain;
+    return saw.chain();
 };
+
+Chainsaw.saw = function (handlers) {
+    var saw = new EventEmitter;
+    var actions = saw.actions = [];
+    saw.handlers = handlers;
+    
+    saw.chain = function () {
+        var ch = Hash.map(handlers, function (h, name) {
+            return function () {
+                actions.push({
+                    name : name,
+                    args : [].slice.call(arguments),
+                });
+                return ch;
+            };
+        });
+        return ch;
+    };
+    
+    saw.next = function () {
+        var action = actions.shift();
+        if (!action) {
+            saw.emit('end');
+        }
+        else {
+            handlers[action.name].apply(handlers, action.args);
+        }
+    };
+    
+    return saw;
+}; 
