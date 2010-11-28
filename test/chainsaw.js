@@ -146,7 +146,9 @@ this.attr = function (assert) {
 
 exports.down = function (assert) {
     var error = null;
+    var s;
     var ch = Chainsaw(function (saw) {
+        s = saw;
         this.raise = function (err) {
             error = err;
             saw.down('catch');
