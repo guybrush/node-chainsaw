@@ -1,6 +1,6 @@
 {
     "name" : "chainsaw",
-    "version" : "0.0.3",
+    "version" : "0.0.4",
     "description" : "Build chainable fluent interfaces the easy way... with a freakin' chainsaw!",
     "modules" : {
         "index" : "./index.js",
@@ -11,6 +11,18 @@
     },
     "dependencies" : {
         "traverse" : ">=0.2.3"
+    },
+    "keywords" : [
+        "chain",
+        "fluent",
+        "interface",
+        "monad",
+        "monadic"
+    ],
+    "author" : {
+        "name" : "James Halliday",
+        "email" : "mail@substack.net",
+        "url" : "http://substack.net"
     },
     "license" : "MIT/X11",
     "engine" : ["node >=0.2.0"]

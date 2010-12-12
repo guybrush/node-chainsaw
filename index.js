@@ -93,5 +93,10 @@ Chainsaw.saw = function (builder, handlers) {
         else saw.next();
     };
     
+    saw.jump = function (step) {
+        saw.step = step;
+        saw.next();
+    };
+    
     return saw;
 }; 
