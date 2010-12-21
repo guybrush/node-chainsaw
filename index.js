@@ -55,13 +55,14 @@ Chainsaw.saw = function (builder, handlers) {
     };
     
     saw.nest = function (cb) {
-        var s = Chainsaw.saw(builder, {});
-        s.on('end', saw.next);
-        var r = builder.call(s.handlers, s);
-        if (r !== undefined) s.handlers = r;
-        
         var args = [].slice.call(arguments, 1);
+        
+        var s = Chainsaw.saw(builder, {});
+        var r = builder.call(s.handlers, s);
+        
+        if (r !== undefined) s.handlers = r;
         cb.apply(s.chain(), args);
+        s.on('end', saw.next);
     };
     
     saw.trap = function (name, cb) {
