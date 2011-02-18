@@ -3,10 +3,10 @@ var Chainsaw = require('chainsaw');
 exports.getset = function (assert) {
     var to = setTimeout(function () {
         assert.fail('builder never fired');
-    }, 50);
+    }, 1000);
     
     var ch = Chainsaw(function (saw) {
-        clearInterval(to);
+        clearTimeout(to);
         var num = 0;
         
         this.get = function (cb) {

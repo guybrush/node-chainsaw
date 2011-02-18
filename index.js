@@ -20,17 +20,16 @@ Chainsaw.saw = function (builder, handlers) {
             if (this.isRoot) return node;
             var ps = this.path;
             
-            return typeof node != 'function'
-                ? node
-                : function () {
+            if (typeof node === 'function') {
+                this.update(function () {
                     saw.actions.push({
                         path : ps,
                         args : [].slice.call(arguments),
                     });
                     return ch;
-                }
-            ;
-        }).value;
+                });
+            }
+        });
         
         process.nextTick(function () {
             saw.emit('begin');
