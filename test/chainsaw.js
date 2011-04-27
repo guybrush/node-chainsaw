@@ -1,6 +1,7 @@
+var assert = require('assert');
 var Chainsaw = require('chainsaw');
 
-exports.getset = function (assert) {
+exports.getset = function () {
     var to = setTimeout(function () {
         assert.fail('builder never fired');
     }, 1000);
@@ -48,7 +49,7 @@ exports.getset = function (assert) {
     ;
 };
 
-exports.nest = function (assert) {
+exports.nest = function () {
     var ch = (function () {
         var vars = {};
         return Chainsaw(function (saw) {
@@ -91,7 +92,7 @@ exports.nest = function (assert) {
     ;
 };
 
-exports.builder = function (assert) {
+exports.builder = function () {
     var cx = Chainsaw(function (saw) {
         this.x = function () {};
     });
@@ -117,7 +118,7 @@ exports.builder = function (assert) {
     });
 };
 
-this.attr = function (assert) {
+this.attr = function () {
     var to = setTimeout(function () {
         assert.fail("attr chain didn't finish");
     }, 50);
@@ -144,7 +145,7 @@ this.attr = function (assert) {
     ch.h.x().h.y();
 };
 
-exports.down = function (assert) {
+exports.down = function () {
     var error = null;
     var s;
     var ch = Chainsaw(function (saw) {
@@ -187,7 +188,7 @@ exports.down = function (assert) {
     ;
 };
 
-exports.trap = function (assert) {
+exports.trap = function () {
     var error = null;
     var ch = Chainsaw(function (saw) {
         var pars = 0;
@@ -260,7 +261,7 @@ exports.trap = function (assert) {
     ;
 };
 
-exports.jump = function (assert) {
+exports.jump = function () {
     var to = setTimeout(function () {
         assert.fail('builder never fired');
     }, 50);
