@@ -24,7 +24,7 @@ Chainsaw.saw = function (builder, handlers) {
                 this.update(function () {
                     saw.actions.push({
                         path : ps,
-                        args : [].slice.call(arguments),
+                        args : [].slice.call(arguments)
                     });
                     return ch;
                 });
@@ -76,7 +76,7 @@ Chainsaw.saw = function (builder, handlers) {
             path : ps,
             step : saw.step,
             cb : cb,
-            trap : true,
+            trap : true
         });
     };
     
